@@ -1,7 +1,14 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, Client, ClientEvents } from 'discord.js';
+import {
+  SlashCommandBuilder,
+  ChatInputCommandInteraction,
+  Client,
+  ClientEvents,
+} from "discord.js";
 
 export interface Command {
-  data: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
+  data:
+    | SlashCommandBuilder
+    | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
   execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
 }
 
@@ -21,6 +28,8 @@ export interface MapRotation {
   spaceportMajor: string;
   blueGateMinor: string;
   blueGateMajor: string;
+  stellaMontisMinor: string;
+  stellaMontisMajor: string;
 }
 
 export interface MessageData {

@@ -1,9 +1,9 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { logger } from './logger';
+import * as fs from "fs";
+import * as path from "path";
+import { logger } from "./logger";
 
-const DATA_DIR = path.join(__dirname, '../data');
-const SERVERS_FILE = path.join(DATA_DIR, 'servers.json');
+const DATA_DIR = path.join(__dirname, "../data");
+const SERVERS_FILE = path.join(DATA_DIR, "servers.json");
 
 export interface ServerConfig {
   [guildId: string]: {
@@ -28,11 +28,11 @@ export function getServerConfigs(): ServerConfig {
   ensureDataDirExists();
   try {
     if (fs.existsSync(SERVERS_FILE)) {
-      const data = fs.readFileSync(SERVERS_FILE, 'utf8');
+      const data = fs.readFileSync(SERVERS_FILE, "utf8");
       return JSON.parse(data) as ServerConfig;
     }
   } catch (error) {
-    logger.error({ err: error }, 'Error reading server configurations');
+    logger.error({ err: error }, "Error reading server configurations");
   }
   return {};
 }
@@ -48,7 +48,7 @@ export function setServerConfig(guildId: string, channelId: string): void {
   try {
     fs.writeFileSync(SERVERS_FILE, JSON.stringify(configs, null, 2));
   } catch (error) {
-    logger.error({ err: error }, 'Error saving server configuration');
+    logger.error({ err: error }, "Error saving server configuration");
   }
 }
 
@@ -63,7 +63,7 @@ export function removeServerConfig(guildId: string): void {
     try {
       fs.writeFileSync(SERVERS_FILE, JSON.stringify(configs, null, 2));
     } catch (error) {
-      logger.error({ err: error }, 'Error removing server configuration');
+      logger.error({ err: error }, "Error removing server configuration");
     }
   }
 }

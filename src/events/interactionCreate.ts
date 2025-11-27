@@ -1,28 +1,31 @@
-import { Interaction, ChatInputCommandInteraction } from 'discord.js';
-import { Event } from '../types';
-import { logger } from '../utils/logger';
+import { Interaction, ChatInputCommandInteraction } from "discord.js";
+import { Event } from "../types";
+import { logger } from "../utils/logger";
 
 const event: Event = {
-  name: 'interactionCreate',
-  
+  name: "interactionCreate",
+
   async execute(interaction: Interaction) {
     if (!interaction.isChatInputCommand()) return;
-    
+
     const client = interaction.client as any;
     const command = client.commands?.get(interaction.commandName);
-    
+
     if (!command) {
       logger.error(`No command matching ${interaction.commandName} was found.`);
       return;
     }
-    
+
     try {
       await command.execute(interaction as ChatInputCommandInteraction);
     } catch (error) {
-      logger.error({ err: error, command: interaction.commandName }, `Error executing command`);
-      
-      const errorMessage = 'There was an error while executing this command!';
-      
+      logger.error(
+        { err: error, command: interaction.commandName },
+        `Error executing command`
+      );
+
+      const errorMessage = "There was an error while executing this command!";
+
       if (interaction.replied || interaction.deferred) {
         await interaction.followUp({ content: errorMessage, ephemeral: true });
       } else {

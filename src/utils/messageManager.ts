@@ -208,7 +208,7 @@ export async function postOrUpdateInChannel(client: Client, channelId: string): 
  * @param {Client} client The Discord client.
  */
 export async function postOrUpdateMapMessages(client: Client): Promise<void> {
-  const serverConfigs = getServerConfigs();
+  const serverConfigs = await getServerConfigs();
   const channelIds = Object.values(serverConfigs).map((config) => config.channelId);
 
   if (channelIds.length === 0) {

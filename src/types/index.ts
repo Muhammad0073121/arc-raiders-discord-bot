@@ -1,3 +1,11 @@
+export interface ServerConfigEntry {
+  channelId: string;
+  serverName?: string;
+}
+
+export interface ServerConfig {
+  [guildId: string]: ServerConfigEntry;
+}
 import { SlashCommandBuilder, ChatInputCommandInteraction, Client, ClientEvents } from 'discord.js';
 
 export interface Command {

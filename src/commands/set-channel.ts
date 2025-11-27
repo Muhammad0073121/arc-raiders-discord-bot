@@ -5,7 +5,6 @@ import {
   ChatInputCommandInteraction,
   TextChannel,
 } from 'discord.js';
-import { setServerConfig } from '../utils/serverConfig';
 import { appendServerInfo } from '../utils/googleSheets';
 import { postOrUpdateInChannel } from '../utils/messageManager';
 import { Command } from '../types';
@@ -34,7 +33,6 @@ const SetChannelCommand: Command = {
 
     const channel = interaction.options.getChannel('channel', true) as TextChannel;
 
-    setServerConfig(interaction.guildId, channel.id);
     logger.info(
       `✅ set-channel configured for server: ${interaction.guild?.name} (ID: ${interaction.guildId}), channel: #${channel.name} (${channel.id})`
     );

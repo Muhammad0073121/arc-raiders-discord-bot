@@ -1,69 +1,26 @@
-import * as fs from 'fs';
-import * as path from 'path';
+
+import { getSheetData } from './googleSheets';
 import { logger } from './logger';
-
-const DATA_DIR = path.join(__dirname, '../data');
-const SERVERS_FILE = path.join(DATA_DIR, 'servers.json');
-
-export interface ServerConfig {
-  [guildId: string]: {
-    channelId: string;
-  };
-}
+import { ServerConfig } from '../types';
 
 /**
- * Ensures the data directory exists.
+ * Reads all server configurations from Google Sheets.
+ * @returns {Promise<ServerConfig>} The server configurations.
  */
-function ensureDataDirExists(): void {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-}
-
-/**
- * Reads all server configurations from the file.
- * @returns {ServerConfig} The server configurations.
- */
-export function getServerConfigs(): ServerConfig {
-  ensureDataDirExists();
+export async function getServerConfigs(): Promise<ServerConfig> {
   try {
-    if (fs.existsSync(SERVERS_FILE)) {
-      const data = fs.readFileSync(SERVERS_FILE, 'utf8');
-      return JSON.parse(data) as ServerConfig;
+    const rows = await getSheetData('ServerInfo!A2:C');
+    if (!rows || rows.length === 0) return {};
+    const configs: ServerConfig = {};
+    for (const row of rows) {
+      const [guildId, channelId, serverName] = row;
+      if (guildId && channelId) {
+        configs[guildId] = { channelId, serverName };
+      }
     }
+    return configs;
   } catch (error) {
-    logger.error({ err: error }, 'Error reading server configurations');
+    logger.error({ err: error }, 'Error reading server configurations from Google Sheets');
+    return {};
   }
-  return {};
-}
-
-/**
- * Adds or updates a server's configuration.
- * @param {string} guildId The ID of the server.
- * @param {string} channelId The ID of the channel to post updates in.
- */
-export function setServerConfig(guildId: string, channelId: string): void {
-  const configs = getServerConfigs();
-  configs[guildId] = { channelId };
-  try {
-    fs.writeFileSync(SERVERS_FILE, JSON.stringify(configs, null, 2));
-  } catch (error) {
-    logger.error({ err: error }, 'Error saving server configuration');
   }
-}
-
-/**
- * Removes a server's configuration.
- * @param {string} guildId The ID of the server to remove.
- */
-export function removeServerConfig(guildId: string): void {
-  const configs = getServerConfigs();
-  if (configs[guildId]) {
-    delete configs[guildId];
-    try {
-      fs.writeFileSync(SERVERS_FILE, JSON.stringify(configs, null, 2));
-    } catch (error) {
-      logger.error({ err: error }, 'Error removing server configuration');
-    }
-  }
-}

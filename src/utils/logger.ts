@@ -9,6 +9,6 @@ export const logger = pino({
       translateTime: 'yyyy-mm-dd HH:MM:ss',
       ignore: 'pid,hostname',
       singleLine: false,
-    }
-  }
+    },
+  },
 });

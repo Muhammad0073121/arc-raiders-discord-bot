@@ -14,6 +14,7 @@ A Discord bot that tracks and displays Arc Raiders map rotation conditions acros
 ## Map Conditions
 
 The bot tracks these condition types across all maps:
+
 - 🤖 Harvester
 - 🌙 Night
 - 💀 Husks
@@ -34,24 +35,28 @@ The bot tracks these condition types across all maps:
 ## Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd arc-raiders-discord-bot
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Configure environment variables**
-   
+
    Copy `.env.example` to `.env`:
+
    ```bash
    copy .env.example .env
    ```
-   
+
    Edit `.env` and fill in your values:
+
    ```env
    DISCORD_TOKEN=your_bot_token_here
    CLIENT_ID=your_client_id_here
@@ -73,6 +78,7 @@ The bot tracks these condition types across all maps:
 ### 2. Bot Permissions
 
 The bot requires these permissions (permission integer: **274877925376**):
+
 - ✅ Send Messages
 - ✅ Embed Links
 - ✅ Manage Messages (for pinning)
@@ -113,6 +119,7 @@ This registers commands globally, which can take up to an hour to propagate to a
 ### Production Mode
 
 1. Build the TypeScript code:
+
    ```bash
    npm run build
    ```
@@ -161,7 +168,7 @@ arc-raiders-discord-bot/
 1. **Startup**: Bot logs in and immediately posts/updates the map rotation status
 2. **Scheduling**: A cron job runs at the top of every hour (UTC)
 3. **Updates**: The bot fetches current and next rotation from the 24-hour schedule
-4. **Message Management**: 
+4. **Message Management**:
    - If a message exists (from `messageIds.json`), it's edited
    - If not, a new message is created and pinned
    - Message ID is saved for future updates
@@ -170,20 +177,24 @@ arc-raiders-discord-bot/
 ## Troubleshooting
 
 ### Bot doesn't respond to commands
+
 - Make sure you ran `npm run deploy-commands`.
 - Check that the bot has proper permissions in the server.
 - Global commands can take up to an hour to update after being deployed.
 
 ### Map rotation message not appearing
+
 - Use the `/set-channel` command to designate a channel for updates.
 - Check the bot has "Send Messages", "Embed Links", and "Manage Messages" permissions in the designated channel.
 - Look at the bot's console logs for any error messages.
 
 ### TypeScript errors
+
 - Run `npm install` to ensure all dependencies are installed
 - Check that Node.js version is 18.x or higher
 
 ### Bot crashes on startup
+
 - Verify all required environment variables are set in `.env`
 - Check that the Discord token is valid
 - Ensure the bot is invited to the server

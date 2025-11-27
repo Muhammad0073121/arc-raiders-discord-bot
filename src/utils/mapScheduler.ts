@@ -22,12 +22,16 @@ export function initScheduler(client: Client): void {
   // Schedule to run at the start of every hour
   // Cron format: minute hour day month weekday
   // '0 * * * *' = at minute 0 of every hour
-  cron.schedule('0 * * * *', async () => {
-    logger.info('⏰ Hourly map rotation update triggered');
-    await updateMapStatus(client);
-  }, {
-    timezone: 'UTC'
-  });
-  
+  cron.schedule(
+    '0 * * * *',
+    async () => {
+      logger.info('⏰ Hourly map rotation update triggered');
+      await updateMapStatus(client);
+    },
+    {
+      timezone: 'UTC',
+    }
+  );
+
   logger.info('📅 Map rotation scheduler initialized (runs every hour at :00)');
 }

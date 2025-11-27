@@ -9,7 +9,9 @@ config();
 
 const commands: any[] = [];
 const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts') || file.endsWith('.js'));
+const commandFiles = fs
+  .readdirSync(commandsPath)
+  .filter((file) => file.endsWith('.ts') || file.endsWith('.js'));
 
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
@@ -26,10 +28,9 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN!);
     logger.info(`Started refreshing ${commands.length} application (/) commands.`);
 
     // Deploy globally
-    const data: any = await rest.put(
-      Routes.applicationCommands(process.env.CLIENT_ID!),
-      { body: commands },
-    );
+    const data: any = await rest.put(Routes.applicationCommands(process.env.CLIENT_ID!), {
+      body: commands,
+    });
     logger.info(`Successfully registered ${data.length} global commands.`);
   } catch (error) {
     logger.error({ err: error }, 'Error deploying commands');

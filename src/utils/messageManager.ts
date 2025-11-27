@@ -2,17 +2,15 @@ import { Client, TextChannel, EmbedBuilder, Message } from 'discord.js';
 import { getSheetData, updateSheetData } from './googleSheets';
 import { MessageDataStore } from '../types';
 import { logger } from './logger';
-import { 
-  getCurrentRotation, 
-  getNextRotation, 
+import {
+  getCurrentRotation,
+  getNextRotation,
   getNextRotationTimestamp,
   formatCondition,
-  CONDITION_COLORS
+  CONDITION_COLORS,
 } from '../config/mapRotation';
 
-
 const SHEET_RANGE = 'MessageIds!A2:C'; // Assumes a sheet named MessageIds with columns: channelId, messageId, lastUpdated
-
 
 /**
  * Read message data from Google Sheets
@@ -40,7 +38,7 @@ export async function readMessageData(): Promise<MessageDataStore> {
  */
 export async function saveMessageData(data: MessageDataStore): Promise<void> {
   try {
-    const values = Object.values(data).map(d => [d.channelId, d.messageId, d.lastUpdated]);
+    const values = Object.values(data).map((d) => [d.channelId, d.messageId, d.lastUpdated]);
     await updateSheetData(SHEET_RANGE, values);
   } catch (error) {
     logger.error({ err: error }, 'Error saving message data to Google Sheets');
@@ -54,101 +52,104 @@ export function createMapRotationEmbed(): EmbedBuilder {
   const current = getCurrentRotation();
   const next = getNextRotation();
   const nextTimestamp = getNextRotationTimestamp();
-  
+
   // Determine embed color based on most severe current condition
-  const primaryColor = CONDITION_COLORS[current.damMajor] || CONDITION_COLORS[current.damMinor] || 0x5865F2;
-  
+  const primaryColor =
+    CONDITION_COLORS[current.damMajor] || CONDITION_COLORS[current.damMinor] || 0x5865f2;
+
   const embed = new EmbedBuilder()
     .setTitle('🗺️ Arc Raiders - Map Rotation Status')
-    .setDescription(`**Current Conditions** (UTC Hour: ${current.hour}:00)\nNext rotation: <t:${nextTimestamp}:R>`)
+    .setDescription(
+      `**Current Conditions** (UTC Hour: ${current.hour}:00)\nNext rotation: <t:${nextTimestamp}:R>`
+    )
     .setColor(primaryColor)
     .addFields(
       // Current Conditions Section
       {
         name: '━━━━━━ 📍 CURRENT CONDITIONS ━━━━━━',
         value: '\u200B', // Invisible character for spacing
-        inline: false
+        inline: false,
       },
       {
         name: '🏔️ Dam',
         value: `Minor: ${formatCondition(current.damMinor)}\nMajor: ${formatCondition(current.damMajor)}`,
-        inline: true
+        inline: true,
       },
       {
         name: '🏛️ Buried City',
         value: `Minor: ${formatCondition(current.buriedCityMinor)}\nMajor: ${formatCondition(current.buriedCityMajor)}`,
-        inline: true
+        inline: true,
       },
       {
         name: '🚀 Spaceport',
         value: `Minor: ${formatCondition(current.spaceportMinor)}\nMajor: ${formatCondition(current.spaceportMajor)}`,
-        inline: true
+        inline: true,
       },
       {
         name: '🌉 Blue Gate',
         value: `Minor: ${formatCondition(current.blueGateMinor)}\nMajor: ${formatCondition(current.blueGateMajor)}`,
-        inline: true
+        inline: true,
       },
       {
         name: '🏔️ Stella Montis',
         value: `Minor: ${formatCondition(current.stellaMontisMinor)}\nMajor: ${formatCondition(current.stellaMontisMajor)}`,
-        inline: true
+        inline: true,
       },
       {
         name: '\u200B',
         value: '\u200B',
-        inline: true
+        inline: true,
       },
       {
         name: '\u200B',
         value: '\u200B',
-        inline: true
+        inline: true,
       },
       // Next Rotation Section
       {
         name: '━━━━━━ ⏭️ NEXT ROTATION ━━━━━━',
         value: '\u200B',
-        inline: false
+        inline: false,
       },
       {
         name: '🏔️ Dam',
         value: `Minor: ${formatCondition(next.damMinor)}\nMajor: ${formatCondition(next.damMajor)}`,
-        inline: true
+        inline: true,
       },
       {
         name: '🏛️ Buried City',
         value: `Minor: ${formatCondition(next.buriedCityMinor)}\nMajor: ${formatCondition(next.buriedCityMajor)}`,
-        inline: true
+        inline: true,
       },
       {
         name: '🚀 Spaceport',
         value: `Minor: ${formatCondition(next.spaceportMinor)}\nMajor: ${formatCondition(next.spaceportMajor)}`,
-        inline: true
+        inline: true,
       },
       {
         name: '🌉 Blue Gate',
         value: `Minor: ${formatCondition(next.blueGateMinor)}\nMajor: ${formatCondition(next.blueGateMajor)}`,
-        inline: true
+        inline: true,
       },
       {
         name: '🏔️ Stella Montis',
         value: `Minor: ${formatCondition(next.stellaMontisMinor)}\nMajor: ${formatCondition(next.stellaMontisMajor)}`,
-        inline: true
+        inline: true,
       },
       {
         name: '\u200B',
         value: '\u200B',
-        inline: true
+        inline: true,
       },
       {
         name: '\u200B',
         value: '\u200B',
-        inline: true
+        inline: true,
       }
     )
     .setTimestamp()
     .setFooter({ text: 'Arc Raiders Bot • Updates every hour' });
-  
+
   return embed;
 }
 
@@ -161,7 +162,7 @@ import { getServerConfigs } from './serverConfig';
  */
 export async function postOrUpdateInChannel(client: Client, channelId: string): Promise<void> {
   try {
-    const channel = await client.channels.fetch(channelId) as TextChannel;
+    const channel = (await client.channels.fetch(channelId)) as TextChannel;
 
     if (!channel || !channel.isTextBased()) {
       logger.warn(`Invalid or non-text channel: ${channelId}`);
@@ -208,7 +209,7 @@ export async function postOrUpdateInChannel(client: Client, channelId: string): 
  */
 export async function postOrUpdateMapMessages(client: Client): Promise<void> {
   const serverConfigs = getServerConfigs();
-  const channelIds = Object.values(serverConfigs).map(config => config.channelId);
+  const channelIds = Object.values(serverConfigs).map((config) => config.channelId);
 
   if (channelIds.length === 0) {
     logger.info('No servers configured for updates.');
